@@ -1,0 +1,16 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+
+# Logs
+crash.log
+
+# Environment files
+.env
+
+# MacOS
+.DS_Store
+
+notes/
