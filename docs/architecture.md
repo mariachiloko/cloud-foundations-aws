@@ -1,58 +1,117 @@
-# AWS Networking Architecture Notes
+# AWS Networking Architecture Notes (Updated)
 
 These notes reflect my understanding of AWS networking fundamentals, including VPC design, subnet behavior, routing, and secure architecture patterns.
 
-✅ What is a VPC?
+---
 
-A VPC is a virtual private cloud. It is like having your own private data center in AWS where you control networking, IP ranges, and traffic. It is logically isolated from other networks in AWS. 
+## VPC Design
 
-✅ What is a subnet?
+- **CIDR Block:** 10.0.0.0/20  
+- Chosen to avoid over-allocating IP space while still allowing structured subnet segmentation.
+- Supports a small-to-medium 3-tier architecture with room for growth.
 
-A subnet is a smaller network inside a VPC where you organize resources like servers and applications. Subnets are used to separate and control access between different parts of your system. Subnets exist in one Availability Zone.
+---
 
-✅ What makes a subnet public vs private?
+## Subnet Architecture (Multi-AZ)
 
-A subnet is not inherently public or private by name. It is determined by its route table. If the route table includes a route to an Internet Gateway, the subnet is public.If it does not include that route, the subnet is private.
+### Availability Zone A
+- Public Subnet A: 10.0.1.0/24  
+- Private App Subnet A: 10.0.3.0/24  
+- Private DB Subnet A: 10.0.5.0/24  
 
-✅ What does a route table do?
+### Availability Zone B
+- Public Subnet B: 10.0.2.0/24  
+- Private App Subnet B: 10.0.4.0/24  
+- Private DB Subnet B: 10.0.6.0/24  
 
-A route table controls how traffic flows within a VPC by defining where network traffic is directed. It determines whether traffic goes to the internet, stays inside the VPC, or goes through other resources like a NAT Gateway.
+This structure provides:
+- Isolation between tiers (web/app/db)
+- High availability across AZs
+- Clear network segmentation
 
-✅ What does a NAT Gateway do?
+---
 
-A NAT Gateway allows resources in a private subnet to access the internet for outbound traffic while preventing inbound connections from the internet.
+## Public vs Private Subnets
 
-✅ What is a security group?
+A subnet is defined as public or private based on its route table:
 
-A security group is a stateful firewall attached to AWS resources (like EC2 instances) that controls inbound and outbound traffic based on rules such as ports, protocols, and IP ranges. For example, a security group might allow HTTP (port 80) from the internet but only allow database access from the application server.
+- **Public Subnet:** Has a route to the Internet Gateway (IGW)
+- **Private Subnet:** No direct route to IGW
 
-## Traffic Flow Example
+---
 
-1. User sends request from internet
-2. Traffic enters VPC through Internet Gateway
-3. Request reaches load balancer in public subnet
-4. Load balancer forwards request to application in private subnet
-5. Application communicates with database in private subnet
-6. Response flows back through load balancer to user
+## Core Components
 
-## Why Not Place App in Public Subnet
+### Internet Gateway (IGW)
+- Allows inbound and outbound internet traffic for public subnets
 
-Placing application servers directly in a public subnet exposes them to the internet, increasing the attack surface. Best practice is to use a load balancer in a public subnet as the entry point and keep application servers in private subnets. This allows better traffic control, reduces direct exposure, and improves overall security.
+### Application Load Balancer (ALB)
+- Deployed across both public subnets
+- Serves as the only public entry point
+- Distributes traffic across EC2 instances in private subnets
 
-## Why Use a NAT Gateway
+### NAT Gateway
+- Deployed in Public Subnet A
+- Enables outbound internet access for private subnets
+- Prevents inbound internet access
 
-A NAT Gateway allows resources in private subnets to access the internet for outbound traffic without exposing them to inbound connections. Assigning public IPs would allow both inbound and outbound traffic, increasing the attack surface. Using NAT enforces a more secure design by separating outbound access from inbound exposure.
+**Design Note:**  
+A single NAT Gateway is used for cost efficiency in this lab.  
+In production, one NAT Gateway per AZ is recommended for high availability.
 
-## Common Failure Scenario: Route Table Misconfiguration
+### EC2 (Application Layer)
+- Runs in private app subnets
+- Not directly accessible from the internet
 
-If a public subnet does not have a route to the Internet Gateway, users cannot access the application.
+### RDS (Database Layer)
+- Deployed in private DB subnets
+- Uses Multi-AZ for high availability
 
-If a private subnet does not have a route to the NAT Gateway, instances cannot reach the internet for updates or API calls.
+---
 
-These failures are caused by incorrect traffic paths, not by issues with the resources themselves.
+## Traffic Flow
+
+1. User sends request from the internet  
+2. Traffic enters via Internet Gateway  
+3. Reaches ALB in public subnets  
+4. ALB routes traffic to EC2 instances in private app subnets  
+5. EC2 communicates with RDS in private DB subnets  
+6. Response flows back through ALB to the user  
+
+---
+
+## Outbound Traffic Flow
+
+- EC2 → NAT Gateway → Internet  
+- Used for:
+  - OS updates
+  - External API calls
+
+---
+
+## Security Design
+
+- Only ALB is publicly accessible
+- EC2 instances are private
+- RDS is fully private
+- Security groups restrict traffic between layers
+
+---
+
+## Failure Considerations
+
+- If NAT Gateway fails:
+  - Outbound traffic is affected
+  - Application remains accessible
+
+- If AZ fails:
+  - Traffic is routed to healthy AZ
+  - Application remains available
+
+---
 
 ## Architecture Diagram
 
 ![Architecture Diagram](./architecture-diagram.png)
 
-This diagram represents a secure AWS architecture where only the load balancer is publicly accessible, while application and database layers remain private.
+This diagram represents a secure, multi-AZ AWS architecture with proper tier isolation and controlled internet access.

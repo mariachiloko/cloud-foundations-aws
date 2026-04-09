@@ -2,13 +2,19 @@
 .terraform/
 *.tfstate
 *.tfstate.*
-*.tfvars
 
 # Logs
 crash.log
 
 # Environment files
 .env
+
+# Variables / secrets
+*.tfvars
+*.tfvars.json 
+
+# CLI credentials
+.aws/
 
 # MacOS
 .DS_Store
