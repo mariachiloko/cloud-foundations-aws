@@ -145,6 +145,21 @@ This ensures that only intended resources are exposed to the internet.
   - ALB → EC2 communication
   - EC2 → RDS communication
 
+ ## Security Groups Design
+
+### Public Security Group
+- Allows inbound HTTP (port 80) from 0.0.0.0/0
+- Purpose: simulate a public-facing entry point
+- This is the only layer exposed to the internet
+
+### Private Security Group
+- Allows inbound HTTP only from the public security group
+- Does NOT allow traffic directly from the internet
+- Purpose: enforce layered architecture and least privilege
+
+### Key Design Decision
+Instead of allowing traffic via CIDR blocks, the private security group references the public security group directly. This ensures only approved internal resources can communicate, rather than opening access broadly. 
+
 ---
 
 ## Failure Considerations
