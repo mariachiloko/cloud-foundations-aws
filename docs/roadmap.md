@@ -1,13 +1,13 @@
-# Cloud Foundations Roadmap
+# Cloud Foundations Roadmap (Refined)
 
 This roadmap outlines the progression of this project from foundational networking concepts to production-ready cloud architecture.
 
 ---
 
-## Phase 1 — Networking (Current Phase)
+## Phase 1 — Networking (Completed)
 
 ### Goal
-Build and understand a secure, multi-AZ VPC architecture from scratch.
+Design, build, and validate a secure, multi-AZ VPC architecture from scratch.
 
 ### What Was Built
 - Custom VPC (10.0.0.0/20)
@@ -15,46 +15,51 @@ Build and understand a secure, multi-AZ VPC architecture from scratch.
   - Public Subnets (ALB + NAT)
   - Private App Subnets (EC2)
   - Private DB Subnets (RDS)
-- Internet Gateway for inbound/outbound public traffic
-- NAT Gateway for outbound private subnet access
-- Route tables controlling traffic flow
+- Internet Gateway for controlled public connectivity
+- NAT Gateway for private outbound access
+- Route tables defining traffic flow
 - Security groups enforcing least-privilege access
 
 ### Key Concepts Learned
 - CIDR block sizing and subnetting strategy
-- Public vs private subnet behavior
+- Public vs private subnet behavior (route table driven)
 - Traffic flow through IGW, ALB, NAT, and route tables
 - Multi-AZ design for high availability
 - Cost vs resiliency tradeoffs (single NAT vs per-AZ NAT)
 
+### Validation Performed
+- Verified inbound traffic flows through ALB only
+- Confirmed private subnets are not publicly accessible
+- Tested outbound connectivity via NAT Gateway
+- Observed routing behavior using route tables
+
 ### Outcome
-Ability to design, explain, and implement a production-style AWS network architecture.
+Ability to design, explain, implement, and validate a production-style AWS network architecture.
 
 ---
 
 ## Phase 2 — IAM & Security
 
 ### Goal
-Implement identity and access control using least privilege.
+Build secure identity and access control using least privilege.
 
-### Focus Areas
+### What Will Be Built
 - IAM users, groups, and roles
-- Policy design (inline vs managed)
-- Role-based access for services (EC2, Lambda, etc.)
-- Secure credential management
+- Role-based access for AWS services
+- Secure policy design (inline vs managed)
+- Credential management best practices
 
 ---
 
 ## Phase 3 — Serverless (Lambda)
 
 ### Goal
-Understand event-driven architecture using AWS Lambda.
+Build an event-driven architecture using AWS Lambda.
 
-### Focus Areas
-- Lambda functions and triggers
-- API Gateway integration
-- IAM roles for Lambda
-- Logging and monitoring
+### What Will Be Built
+- Lambda functions with API Gateway integration
+- IAM roles for secure execution
+- Logging and monitoring setup
 
 ---
 
@@ -63,11 +68,10 @@ Understand event-driven architecture using AWS Lambda.
 ### Goal
 Deploy containerized applications without managing servers.
 
-### Focus Areas
-- ECS clusters and services
-- Fargate task definitions
+### What Will Be Built
+- ECS cluster and Fargate services
+- Task definitions and networking integration
 - Load balancing with ALB
-- Networking integration with VPC
 
 ---
 
@@ -76,23 +80,22 @@ Deploy containerized applications without managing servers.
 ### Goal
 Automate infrastructure and application deployment.
 
-### Focus Areas
+### What Will Be Built
 - GitHub Actions workflows
-- Terraform automation
+- Terraform automation pipelines
 - Secure secrets handling
-- Deployment pipelines
 
 ---
 
 ## Phase 6 — Monitoring & Operations
 
 ### Goal
-Gain visibility into system performance and health.
+Implement visibility and operational awareness.
 
-### Focus Areas
-- CloudWatch metrics and logs
-- Alarms and notifications
-- Troubleshooting and incident response
+### What Will Be Built
+- CloudWatch dashboards and logs
+- Alerts and notifications
+- Basic incident response workflows
 
 ---
 
@@ -101,25 +104,23 @@ Gain visibility into system performance and health.
 ### Goal
 Understand container orchestration at scale.
 
-### Focus Areas
-- EKS cluster setup
-- Node groups and networking
-- Deploying applications on Kubernetes
-- Scaling and resilience
+### What Will Be Built
+- EKS cluster with node groups
+- Application deployment and scaling
+- Networking and service exposure
 
 ---
 
 ## Phase 8 — Capstone Project
 
 ### Goal
-Combine all skills into a production-style system.
+Build a complete production-style system.
 
-### Focus Areas
-- Full architecture design
-- Infrastructure as Code (Terraform)
-- CI/CD pipeline
-- Monitoring and alerting
-- Security best practices
+### What Will Be Built
+- Full AWS architecture using Terraform
+- CI/CD pipeline integration
+- Monitoring and alerting system
+- Secure and scalable infrastructure
 
 ---
 
@@ -127,18 +128,16 @@ Combine all skills into a production-style system.
 
 This project follows a deliberate approach:
 
-1. Build manually to understand behavior
-2. Reinforce concepts and architecture decisions
-3. Rebuild using Terraform
-4. Document design decisions and tradeoffs
+1. Build to understand behavior  
+2. Validate how the system actually works  
+3. Rebuild using Infrastructure as Code (Terraform)  
+4. Document decisions and tradeoffs  
 
 ---
 
-## Final Objective
+## What This Project Demonstrates
 
-Be able to:
-
-- Design real-world AWS architectures
-- Explain every component and decision clearly
-- Build infrastructure using best practices
-- Demonstrate job-ready cloud engineering skills
+- Ability to design cloud infrastructure intentionally  
+- Understanding of real-world networking and security patterns  
+- Experience validating system behavior, not just deploying resources  
+- Readiness for sysadmin and cloud engineering responsibilities  
