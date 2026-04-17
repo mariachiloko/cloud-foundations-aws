@@ -1,108 +1,97 @@
-# Cloud Foundations - AWS Networking (Phase 1)
+# Cloud Foundations AWS Project
 
-## 📌 Project Overview
+## Overview
+This project is a multi-phase AWS infrastructure build designed to simulate a real-world cloud environment using Terraform.
 
-This project demonstrates the design and implementation of foundational AWS networking components, including VPC architecture, subnet design, routing, and secure traffic control.
-
-The environment is built using a manual-first approach to fully understand system behavior, followed by Terraform to enable repeatable and scalable infrastructure.
-
-This project uses a **custom-designed multi-AZ VPC architecture** to reflect real-world cloud engineering practices.
+Each phase focuses on a core cloud concept and builds toward a production-style architecture. The goal is to demonstrate hands-on experience with designing, deploying, and managing scalable and secure infrastructure in AWS.
 
 ---
 
-## 🏗️ Architecture Summary
-
-- **VPC CIDR:** 10.0.0.0/20  
-- **Availability Zones:** 2 (A & B)
-
-### Subnets
-
-| Tier | AZ A | AZ B |
-|------|------|------|
-| Public | 10.0.1.0/24 | 10.0.2.0/24 |
-| Private App | 10.0.3.0/24 | 10.0.4.0/24 |
-| Private DB | 10.0.5.0/24 | 10.0.6.0/24 |
-
-### Core Components
-
-- Internet Gateway (IGW)
-- Application Load Balancer (ALB) spanning both public subnets
-- EC2 instances in private app subnets
-- RDS (Multi-AZ) in private DB subnets
-- NAT Gateway (single, for lab cost efficiency)
+## Objectives
+- Build real-world AWS infrastructure using Terraform (Infrastructure as Code)
+- Develop a strong foundation in cloud architecture and networking
+- Apply best practices for security, scalability, and reliability
+- Create a structured portfolio that demonstrates practical cloud engineering skills
 
 ---
 
-## 🎯 Objectives
-
-- Design a secure and scalable VPC architecture
-- Implement public and private subnet patterns across multiple availability zones
-- Control traffic flow using route tables, gateways, and security groups
-- Apply least-privilege networking principles
-- Rebuild infrastructure using Terraform for consistency and automation
+## Technologies Used
+- AWS (VPC, IAM, EC2, ALB, ECS, Lambda, etc.)
+- Terraform (Infrastructure as Code)
+- Git & GitHub (version control and project tracking)
 
 ---
 
-## 🧠 Engineering Approach
+## Project Structure
 
-This project follows a structured workflow:
+```
+cloud-foundations/
+│
+├── README.md
+├── .gitignore
+|
+├── phase-1-networking/
+├── phase-2-iam/
+├── phase-3-lambda/
+├── phase-4-ecs/
+├── phase-5-cicd/
+├── phase-6-monitoring/
+├── phase-7-eks/
+└── phase-8-capstone/
+```
 
-1. Manual implementation in AWS Console to understand behavior
-2. Concept validation and traffic flow analysis
-3. Terraform implementation for reproducibility
-4. Documentation of design decisions and tradeoffs
-
----
-
-## 🔁 Traffic Flow
-
-1. User → Internet  
-2. Internet → Internet Gateway  
-3. IGW → Application Load Balancer (public subnets)  
-4. ALB → EC2 (private app subnets)  
-5. EC2 → RDS (private DB subnets)  
-6. Response flows back through ALB  
-
----
-
-## 🌐 Outbound Access
-
-- EC2 instances in private subnets access the internet via:
-  - **NAT Gateway (Public Subnet A)**
-
-**Design Decision:**  
-A single NAT Gateway is used to reduce cost in this lab.  
-In production, one NAT Gateway per AZ would be used for high availability.
+Each phase is structured as an independent module with its own:
+- Terraform configuration
+- Architecture documentation
+- Phase-specific README
 
 ---
 
-## 🔐 Security Design
+## Phases Breakdown
 
-- Only ALB is publicly accessible
-- EC2 instances are private (no public IPs)
-- RDS is isolated in private DB subnets
-- Security groups control all traffic between layers
+### Phase 1 – Networking
+- VPC, subnets (public/private), route tables
+- Internet Gateway and NAT Gateway
+- Foundational networking architecture for a 3-tier application
+
+### Phase 2 – IAM
+- IAM users, roles, and policies
+- Least privilege access design
+- Secure access patterns for AWS services
+
+### Phase 3 – Lambda
+- Serverless compute with AWS Lambda
+- Event-driven architecture fundamentals
+
+### Phase 4 – ECS
+- Containerized applications using ECS
+- Service deployment and scaling
+
+### Phase 5 – CI/CD
+- Infrastructure and application deployment pipelines
+- Automation using CI/CD tools
+
+### Phase 6 – Monitoring
+- Logging and monitoring with CloudWatch
+- Alerts and observability best practices
+
+### Phase 7 – EKS
+- Kubernetes cluster deployment with EKS
+- Container orchestration concepts
+
+### Phase 8 – Capstone
+- Full production-style architecture combining all components
+- End-to-end infrastructure design
 
 ---
 
-## ⚠️ Failure Considerations
-
-- **NAT Failure:** Outbound traffic impacted, application still accessible  
-- **AZ Failure:** Traffic routed to healthy AZ, system remains available  
-
----
-
-## 🚀 Outcome
-
-This project demonstrates the ability to design, build, and explain AWS networking infrastructure using real-world best practices, including:
-
-- Multi-AZ architecture design  
-- Secure tier isolation  
-- Cost vs resilience tradeoff decisions  
-- Infrastructure as Code (Terraform)
+## Why This Project Matters
+This project demonstrates the ability to:
+- Design and deploy AWS infrastructure using Infrastructure as Code
+- Implement secure and scalable cloud architectures
+- Organize and document complex systems clearly
+- Apply real-world engineering practices beyond basic tutorials
 
 ---
 
-## 📊 Architecture Diagram
 
-![Architecture Diagram](./architecture-diagram.png)
