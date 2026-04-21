@@ -15,12 +15,26 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+
+      - name: Show OIDC context
+        env:
+          AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+        run: |
+          test -n "$AWS_ROLE_ARN" || {
+            echo "AWS_ROLE_ARN GitHub variable is not set."
+            exit 1
+          }
+          echo "Repository: ${{ github.repository }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Expected sub claim: repo:${{ github.repository }}:ref:${{ github.ref }}"
 
       - name: Configure AWS credentials using OIDC
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          role-session-name: github-actions-oidc-test
+          audience: sts.amazonaws.com
           aws-region: us-east-1
 
       - name: Test AWS Access
