@@ -13,65 +13,154 @@ This separation is critical for building secure and scalable cloud systems.
 
 ---
 
-## Components
+## Architecture Evolution (Important)
 
-### IAM User
+This phase progressed through three stages:
+
+1. **Manual IAM (Learning Phase)**
+2. **OIDC Integration (CI/CD Security)**
+3. **Terraform + AWS SSO (Production-Style Setup)**
+
+---
+
+## Core Components
+
+### IAM User (Learning Only)
 - Represents an individual identity (person or application)
 - Can authenticate using:
-  - Username and password (console access)
-  - Access keys (programmatic access)
+  - Username/password (console)
+  - Access keys (programmatic)
 
-⚠️ IAM users are NOT best practice for production systems  
-They are used here for learning purposes only.
+⚠️ Not used in production systems  
+Used only to understand IAM behavior
+
+---
+
+### IAM Role (Primary Design)
+- Represents an assumable identity
+- Used by:
+  - AWS services
+  - Applications
+  - External systems (GitHub via OIDC)
+
+Provides:
+- Temporary credentials
+- Better security
+- Easier management
 
 ---
 
 ### IAM Policy
-- A JSON document that defines permissions
+- JSON document defining permissions
 - Contains:
   - Effect (Allow or Deny)
   - Actions (e.g., s3:GetObject)
-  - Resources (specific AWS resources)
+  - Resources
 
-Policies are attached to users, groups, or roles.
+Attached to roles (preferred) or users (learning phase)
 
 ---
 
-### Permissions Flow
+### Trust Policy
+- Defines **who can assume a role**
+- Example:
+  - GitHub (OIDC)
+  - AWS services
 
-When a user makes a request:
+---
 
-1. AWS authenticates the identity (login)
-2. AWS evaluates all attached policies
-3. AWS determines:
+## Authentication Architecture
+
+### Local Development (Human Access)
+
+**AWS SSO (IAM Identity Center)**
+
+Flow:
+1. User runs `aws sso login`
+2. Browser-based authentication
+3. AWS issues temporary credentials
+4. Terraform uses those credentials
+
+Benefits:
+- No long-term access keys
+- Temporary credentials
+- Centralized access control
+
+---
+
+### CI/CD Authentication (GitHub Actions)
+
+**OIDC (OpenID Connect)**
+
+Flow:
+1. GitHub Actions requests OIDC token
+2. AWS validates token via OIDC provider
+3. Trust policy checks:
+   - Repository (`sub` claim)
+   - Audience (`aud`)
+4. AWS issues temporary credentials
+5. Workflow executes with IAM role permissions
+
+Benefits:
+- No stored credentials
+- Short-lived access
+- Secure, modern authentication
+
+---
+
+## Permissions Evaluation Flow
+
+When a request is made:
+
+1. Identity is authenticated
+2. AWS evaluates all policies
+3. Rules applied:
    - Explicit Deny → always denied
    - Allow → allowed if no deny exists
-4. Request is either:
+4. Final decision:
    - Allowed ✅
    - Denied ❌
 
 ---
 
-## Example Setup (Day 2)
+## Example (Learning Phase Behavior)
 
 ### IAM User
-- Name: phase2-test-user
+- phase2-test-user
 
-### Attached Policy
+### Policy
 - AmazonS3ReadOnlyAccess
+
+### Observed Behavior
+
+Allowed:
+- View S3 buckets
+- Read objects
+
+Denied:
+- Launch EC2
+- Modify IAM
+- Any non-S3 action
 
 ---
 
-## Behavior Observed
+## Terraform Architecture (Final State)
 
-### Allowed Actions
-- View S3 buckets
-- Read S3 objects
+IAM is fully managed using Terraform:
 
-### Denied Actions
-- Launch EC2 instances
-- Modify IAM resources
-- Perform actions outside S3 read scope
+```
+terraform/
+├── main.tf        # provider config (SSO profile)
+├── iam.tf         # IAM resources
+├── variables.tf   # inputs (e.g., GitHub repo)
+├── outputs.tf
+```
+
+Resources created:
+- OIDC Provider
+- IAM Role (GitHub Actions)
+- IAM Policy
+- Role Policy Attachment
 
 ---
 
@@ -79,45 +168,51 @@ When a user makes a request:
 
 ### Least Privilege
 - Only grant required permissions
-- Avoid broad access like AdministratorAccess
+- Avoid overly broad access
 
 ---
 
-### Separation of Identity and Permissions
-- Users represent identity
-- Policies define permissions
-- This separation improves flexibility and security
+### Roles Over Users
+- Roles provide temporary credentials
+- Users are avoided in production
+
+---
+
+### Separation of Concerns
+- Human access (SSO)
+- System access (OIDC)
+- Permissions (Policies)
 
 ---
 
 ### Deny by Default
-- All actions are denied unless explicitly allowed
+- Everything is denied unless explicitly allowed
 
 ---
 
 ## Real-World Considerations
 
-### Why IAM Users Are Not Used in Production
-- Long-term credentials increase security risk
-- Harder to manage at scale
-- Do not support temporary access
+### Why Access Keys Are Avoided
+- Long-lived credentials are risky
+- Can be leaked or misused
 
-### Preferred Approach
-- Use IAM Roles instead
-- Roles provide:
-  - Temporary credentials
-  - Better security
-  - Easier management
+### Preferred Modern Approach
+- AWS SSO for human users
+- OIDC for automation
+- Temporary credentials everywhere
 
 ---
 
 ## Summary
 
-IAM is the security foundation of AWS.
+This phase moves from basic IAM concepts to a production-style security model.
 
-Understanding how identity and permissions interact is critical for:
-- Securing infrastructure
-- Preventing unauthorized access
-- Designing scalable systems
+You implemented:
 
-This phase establishes the foundation for using roles and advanced security patterns in later steps.
+- Identity vs permission separation
+- Role-based access control
+- Secure CI/CD authentication (OIDC)
+- Secure human authentication (SSO)
+- Terraform-managed IAM infrastructure
+
+This forms the foundation for all secure AWS systems going forward.

@@ -32,12 +32,13 @@ Strong IAM skills are essential for:
 
 ## Key Concepts Covered
 
-- IAM Users
+- IAM Users (learning only)
 - IAM Roles
 - IAM Policies (JSON)
 - Trust Relationships
 - Least Privilege
 - Temporary Credentials
+- AWS SSO (IAM Identity Center)
 - OIDC Authentication (GitHub → AWS)
 
 ---
@@ -46,10 +47,21 @@ Strong IAM skills are essential for:
 
 This phase introduces identity relationships instead of network flow:
 
-- **Users** → represent human access (for learning purposes)
+- **Users** → represent human access (learning phase only)
 - **Roles** → used by services and applications
 - **Policies** → define permissions
 - **Trust Policies** → define *who can assume a role*
+
+Authentication design:
+
+- **Local (Human Access):**
+  - AWS SSO (IAM Identity Center)
+  - Temporary credentials via browser login
+
+- **CI/CD (Automation):**
+  - GitHub Actions uses OIDC
+  - AWS issues temporary credentials via STS
+  - No stored access keys
 
 ---
 
@@ -60,6 +72,7 @@ phase-2-iam/
 │
 ├── terraform/
 │   ├── main.tf
+│   ├── iam.tf
 │   ├── variables.tf
 │   ├── outputs.tf
 │   └── versions.tf
@@ -93,7 +106,8 @@ Every concept follows this flow:
 - Custom IAM policies (JSON)
 - Permission testing (AccessDenied scenarios)
 - GitHub OIDC authentication (no access keys)
-- Terraform-based IAM configuration
+- Terraform-managed IAM infrastructure
+- AWS SSO-based authentication for local Terraform
 
 ---
 
@@ -101,8 +115,10 @@ Every concept follows this flow:
 
 - No hardcoded credentials
 - Roles instead of long-term users
-- Least privilege permissions
-- OIDC instead of access keys for CI/CD
+- Least privilege permissions (initially broad for learning, then refined)
+- AWS SSO for human authentication
+- OIDC for CI/CD authentication
+- Separation of human vs system access
 - Explicit permission documentation
 
 ---
@@ -144,16 +160,18 @@ Fix:
 - Policies must be **intentional and minimal**
 - Debugging IAM is a critical real-world skill
 - OIDC removes the need for storing credentials
+- AWS SSO replaces long-term access keys for human users
+- Terraform can securely use SSO-based authentication
 
 ---
 
 ## Interview Talking Points
 
 ### Simple Explanation
-"IAM controls who can do what in AWS. I used roles and policies to enforce least privilege and implemented OIDC to securely allow GitHub Actions to access AWS without storing credentials."
+"IAM controls who can do what in AWS. I used roles and policies to enforce least privilege, used AWS SSO for secure human access, and implemented OIDC so GitHub Actions can access AWS without storing credentials."
 
 ### Deeper Explanation
-"I designed IAM using roles instead of users, defined permissions using JSON policies, and controlled access using trust relationships. I also implemented OIDC so GitHub could assume a role securely via STS, eliminating long-lived credentials."
+"I designed IAM using roles instead of users, defined permissions using JSON policies, and controlled access using trust relationships. For authentication, I separated human access and system access by using AWS SSO for local development and OIDC for GitHub Actions, ensuring all credentials are temporary and securely managed."
 
 ---
 
@@ -171,6 +189,7 @@ Always remove unused IAM resources:
 - Delete test users
 - Remove unused roles
 - Review policies
+- Avoid leaving unnecessary permissions in place
 
 ---
 
@@ -185,4 +204,3 @@ But:
 - "Is it secure?"
 - "Is it minimal?"
 - "Can I explain it?"
-

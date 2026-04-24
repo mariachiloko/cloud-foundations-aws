@@ -29,7 +29,7 @@ OIDC solves this by:
 
 The IAM role was configured with a trust policy that restricts access to:
 
-- GitHub organization/user: `mariachiloko`
+- GitHub organization/user: `myusername`
 - Specific repository
 - Specific branch (main)
 
