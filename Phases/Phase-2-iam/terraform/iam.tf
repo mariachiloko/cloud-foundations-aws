@@ -44,24 +44,89 @@ resource "aws_iam_role" "github_actions_role" {
 }
 
 #############################################
-# IAM Policy (Permissions for Terraform)
+
+# IAM Policy (Scoped Permissions for Terraform IAM Phase)
+
 #############################################
 
 resource "aws_iam_policy" "terraform_policy" {
-  name = "terraform-deploy-policy"
 
-  description = "Temporary broad permissions for Terraform (will restrict later)"
+  name = "terraform-iam-phase-deploy-policy"
+
+  description = "Scoped permissions for Terraform to manage IAM resources used in Phase 2."
 
   policy = jsonencode({
+
     Version = "2012-10-17",
+
     Statement = [
+
       {
-        Effect   = "Allow",
-        Action   = "*",
+
+        Sid = "ManagePhase2IamResources"
+
+        Effect = "Allow"
+
+        Action = [
+
+          "iam:CreateRole",
+
+          "iam:GetRole",
+
+          "iam:UpdateRole",
+
+          "iam:DeleteRole",
+
+          "iam:ListRoles",
+
+          "iam:CreatePolicy",
+
+          "iam:GetPolicy",
+
+          "iam:GetPolicyVersion",
+
+          "iam:ListPolicyVersions",
+
+          "iam:DeletePolicy",
+
+          "iam:CreatePolicyVersion",
+
+          "iam:DeletePolicyVersion",
+
+          "iam:AttachRolePolicy",
+
+          "iam:DetachRolePolicy",
+
+          "iam:ListAttachedRolePolicies",
+
+          "iam:CreateOpenIDConnectProvider",
+
+          "iam:GetOpenIDConnectProvider",
+
+          "iam:DeleteOpenIDConnectProvider",
+
+          "iam:UpdateOpenIDConnectProviderThumbprint",
+
+          "iam:ListOpenIDConnectProviders",
+
+          "iam:TagRole",
+
+          "iam:TagPolicy",
+
+          "iam:UntagRole",
+
+          "iam:UntagPolicy"
+
+        ]
+
         Resource = "*"
+
       }
+
     ]
+
   })
+
 }
 
 #############################################

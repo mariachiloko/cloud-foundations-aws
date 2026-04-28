@@ -111,6 +111,13 @@ Configuration drift occurs when infrastructure is changed manually and no longer
 - AWS SSO for human authentication
 - OIDC for CI/CD authentication
 
+## IAM Permission Scope
+
+The original Terraform deployment policy temporarily used `Action = "*"` and `Resource = "*"` during early testing.
+
+That was replaced with a scoped IAM-focused policy that only allows IAM and OIDC actions required for this phase.
+
+Some IAM actions still use `Resource = "*"` because certain IAM list/create operations do not support tight resource-level scoping in the same way as services like S3. This is documented as an intentional limitation and future improvement area.
 ---
 
 ## Final Thought

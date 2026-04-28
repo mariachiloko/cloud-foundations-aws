@@ -22,6 +22,21 @@ Each phase focuses on a core cloud concept and builds toward a production-style 
 
 ---
 
+## Authentication Strategy
+
+This project follows modern AWS security best practices by avoiding long-term credentials.
+
+- **Local Development:** AWS SSO (IAM Identity Center)
+  - Engineers authenticate through a browser login
+  - Temporary credentials are issued for Terraform usage
+- **CI/CD (GitHub Actions):** OIDC (OpenID Connect)
+  - GitHub assumes an IAM role using short-lived tokens
+  - No AWS access keys are stored in the repository or secrets
+
+This separation ensures secure, scalable, and production-aligned authentication patterns.
+
+---
+
 ## Project Structure
 
 ```
@@ -40,7 +55,7 @@ cloud-foundations/
 └── phase-8-capstone/
 ```
 
-Each phase is structured as an independent module with its own:
+Each phase is structured as an independent Terraform root module with its own:
 - Terraform configuration
 - Architecture documentation
 - Phase-specific README
@@ -57,7 +72,8 @@ Each phase is structured as an independent module with its own:
 ### Phase 2 – IAM
 - IAM users, roles, and policies
 - Least privilege access design
-- Secure access patterns for AWS services
+- Secure authentication using AWS SSO and OIDC
+- Terraform-managed IAM infrastructure
 
 ### Phase 3 – Lambda
 - Serverless compute with AWS Lambda
@@ -69,7 +85,7 @@ Each phase is structured as an independent module with its own:
 
 ### Phase 5 – CI/CD
 - Infrastructure and application deployment pipelines
-- Automation using CI/CD tools
+- Automation using GitHub Actions with OIDC authentication
 
 ### Phase 6 – Monitoring
 - Logging and monitoring with CloudWatch
@@ -89,9 +105,8 @@ Each phase is structured as an independent module with its own:
 This project demonstrates the ability to:
 - Design and deploy AWS infrastructure using Infrastructure as Code
 - Implement secure and scalable cloud architectures
+- Use modern authentication methods (SSO and OIDC) instead of static credentials
 - Organize and document complex systems clearly
 - Apply real-world engineering practices beyond basic tutorials
 
 ---
-
-

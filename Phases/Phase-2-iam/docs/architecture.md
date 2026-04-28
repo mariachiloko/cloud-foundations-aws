@@ -434,8 +434,6 @@ For this project, the preferred model is:
 
 ---
 
-## Interview Explanation
-
 ### Simple Explanation
 
 This phase built an IAM security foundation. I learned how AWS separates identity from permissions, why roles are preferred over users, and how least privilege reduces risk. I also configured GitHub Actions to authenticate to AWS using OIDC instead of long-term access keys.
