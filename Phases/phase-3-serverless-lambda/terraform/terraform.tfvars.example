@@ -1,0 +1,5 @@
+# Example Terraform variable values only.
+# Copy this file to terraform.tfvars locally if needed.
+# Do not commit real terraform.tfvars files.
+
+aws_region = "us-east-1"

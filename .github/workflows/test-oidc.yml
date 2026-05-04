@@ -25,6 +25,14 @@ jobs:
             echo "AWS_ROLE_ARN GitHub variable is not set."
             exit 1
           }
+          case "$AWS_ROLE_ARN" in
+            arn:aws:iam::*:role/*) ;;
+            *)
+              echo "AWS_ROLE_ARN does not look like a valid IAM role ARN: $AWS_ROLE_ARN"
+              exit 1
+              ;;
+          esac
+          echo "Role ARN: $AWS_ROLE_ARN"
           echo "Repository: ${{ github.repository }}"
           echo "Ref: ${{ github.ref }}"
           echo "Expected sub claim: repo:${{ github.repository }}:ref:${{ github.ref }}"
