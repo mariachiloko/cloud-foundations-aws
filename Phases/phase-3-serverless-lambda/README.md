@@ -8,7 +8,12 @@ This phase builds on the earlier networking and IAM foundations. Phase 1 helped 
 
 ## What I Am Building
 
-In this phase, I will build a simple AWS Lambda-based system. The first version will focus on understanding the Lambda execution flow:
+In this phase, I built a simple AWS Lambda-based system in two layers:
+
+1. Manual Lambda and API Gateway exploration in the AWS Console
+2. Terraform reconstruction of the same serverless flow
+
+The first version focused on understanding the Lambda execution flow:
 
 ```text
 Event Trigger
@@ -18,7 +23,7 @@ AWS Lambda Function
 CloudWatch Logs
 ```
 
-Later, this may expand into an API Gateway or event-based workflow where Lambda responds to real AWS events.
+That manual work was later rebuilt with Terraform so the architecture could be reproduced, reviewed, and explained as code.
 
 ## Why This Matters
 
@@ -54,12 +59,19 @@ phase-3-serverless-lambda/
 │   └── diagrams/
 ├── terraform/
 │   ├── main.tf
+│   ├── lambda_src/
+│   │   └── app.py
 │   ├── variables.tf
 │   ├── outputs.tf
 │   ├── versions.tf
 │   └── terraform.tfvars.example
 └── notes/
-    └── day1-notes.md
+    ├── day1-notes.md
+    ├── day2-notes.md
+    ├── day3-notes.md
+    ├── day4-notes.md
+    ├── day5-notes.md
+    └── day6-notes.md
 ```
 
 ## Security Notes
@@ -73,6 +85,7 @@ phase-3-serverless-lambda/
 ## Current Status
 
 - Phase 3 folder structure created
-- Day 1 conceptual documentation started
-- Terraform files created as placeholders only
-- No AWS resources deployed yet
+- Day 1 to Day 4 learning notes completed
+- Day 5 Terraform implementation added
+- Lambda execution role, CloudWatch logs, and HTTP API route defined in Terraform
+- Day 6 live AWS apply and teardown completed against the `cloud-foundations-sso` account

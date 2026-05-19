@@ -4,7 +4,7 @@
 
 Phase 3 introduces serverless architecture using AWS Lambda. The goal is to understand how code can run in AWS without managing EC2 instances or traditional servers.
 
-As of Day 3, the architecture now includes an HTTP API trigger using Amazon API Gateway. This means the Lambda function is no longer only tested manually. It can now be invoked through a web request.
+As of Day 5, the architecture exists both as a manual learning flow and as a Terraform-managed stack. The HTTP API trigger uses Amazon API Gateway, which means the Lambda function can be invoked through a web request instead of only through console testing.
 
 This is the first working event-driven serverless flow in Phase 3.
 
@@ -169,6 +169,8 @@ Completed so far in Phase 3:
 - `GET /hello` route
 - Successful browser-based invocation
 - Initial troubleshooting of route/stage behavior
+- Live Terraform apply in AWS
+- Immediate teardown after verification to avoid lingering resources and cost
 
 ## Future Architecture Expansion
 
@@ -206,3 +208,48 @@ The next steps should continue following the project method:
 2. Concept reinforcement
 3. Terraform implementation
 4. Comparison and reflection
+
+## Terraform Implementation
+
+The Terraform stack now maps the manual build to explicit resources:
+
+- `aws_iam_role.lambda_execution_role` creates the Lambda execution role
+- `aws_iam_role_policy.lambda_logs` grants least-privilege CloudWatch Logs access
+- `aws_cloudwatch_log_group.lambda` stores function logs with retention control
+- `aws_lambda_function.hello` deploys the Python handler
+- `aws_apigatewayv2_api.http_api` creates the HTTP API front door
+- `aws_apigatewayv2_route.hello` maps `GET /hello` to the Lambda integration
+- `aws_apigatewayv2_stage.dev` exposes the deployed `dev` stage
+- `aws_lambda_permission.allow_apigateway` allows API Gateway to invoke the function
+
+## Manual vs Terraform
+
+### Manual Build
+
+Manual work was useful for:
+
+- observing the Lambda console directly
+- understanding how API Gateway routes and stages affect requests
+- verifying IAM trust and permission behavior by hand
+
+### Terraform Rebuild
+
+Terraform is better for:
+
+- repeatability
+- change review
+- version control
+- rebuilding the same pattern in future phases
+
+### Operational Tradeoff
+
+Manual setup is faster for learning one-off behavior.
+Terraform is safer for long-lived portfolio work because it captures the architecture as code and makes the rebuild process transparent.
+
+The live apply-and-destroy cycle shows a third operational pattern:
+
+- validate the stack in AWS
+- verify the important outputs
+- destroy the environment when it is no longer needed
+
+This matters in real environments because the engineer is responsible not only for creating resources, but also for removing them when the work is complete. Cleanup is part of the architecture, not an afterthought.
