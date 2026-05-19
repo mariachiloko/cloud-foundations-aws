@@ -2,11 +2,11 @@
 
 ## Current Phase
 
-Phase 3 - Serverless with AWS Lambda
+Phase 4 - Containers with ECS Fargate
 
 ## Current Day
 
-Day 6
+Day 1
 
 ## Completed Work
 
@@ -17,14 +17,17 @@ Day 6
 - Phase 3 Terraform config validated locally with `terraform init` and `terraform validate`
 - Phase 3 live AWS apply completed against `cloud-foundations-sso`
 - Phase 3 live AWS teardown completed immediately after verification to avoid cost
+- Phase 3 comparison and reflection completed
+- Phase 4 structure and Day 1 concept scaffold created
 
 ## In Progress
 
-- Phase 4 planning and future phase scoping
+- Phase 4 concept understanding and structure review
 
 ## Remaining Work
 
-- Start Phase 4 architecture and documentation work when ready
+- Begin Phase 4 manual-first ECS and Fargate learning
+- Refine the ECS architecture and Terraform implementation once the concepts are clear
 
 ## Future Phases
 
